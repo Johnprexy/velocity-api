@@ -1,0 +1,47 @@
+name: Velocity API CI Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build, Test & Package
+    runs-on: ubuntu-latest
+
+    container:
+      image: centos:8
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Java & Maven
+        run: |
+          yum -y update
+          yum -y install java-17-openjdk java-17-openjdk-devel maven
+          java -version
+          mvn -version
+
+      - name: Initialize
+        run: echo "Starting Velocity API Build..."
+
+      - name: Compile
+        run: mvn clean compile
+
+      - name: Test
+        run: mvn test
+
+      - name: Package
+        run: mvn package
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: velocity-api-jar
+          path: target/*.jar
+
