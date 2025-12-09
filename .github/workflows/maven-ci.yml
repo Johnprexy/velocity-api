@@ -2,33 +2,25 @@ name: Velocity API CI Pipeline
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
   pull_request:
-    branches:
-      - master
+    branches: [ master ]
 
 jobs:
   build:
-    name: Build, Test & Package
     runs-on: ubuntu-latest
 
     container:
-      image: centos:8
+      image: quay.io/centos/centos:stream9
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install Java & Maven
         run: |
-          yum -y update
-          yum -y install java-17-openjdk java-17-openjdk-devel maven
+          dnf -y install java-17-openjdk java-17-openjdk-devel maven
           java -version
           mvn -version
-
-      - name: Initialize
-        run: echo "Starting Velocity API Build..."
 
       - name: Compile
         run: mvn clean compile
